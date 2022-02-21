@@ -1,0 +1,100 @@
+coauthor_cs-hybrid-ber:
+  fixed:
+    data.directory: /nfs/homedirs/fuchsgru/MastersThesis/.exported_datasets/coauthor_cs/hybrid-perturbations
+    data.ood_test_dataset: ood-test-ber
+    data.ood_val_dataset: ood-val-ber
+    run.experiment_directory: saved_experiments/gpn/coauthor_cs
+    run.experiment_name: hybrid-ber
+    run.num_splits: 5
+coauthor_cs-hybrid-loc:
+  fixed:
+    data.directory: /nfs/homedirs/fuchsgru/MastersThesis/.exported_datasets/coauthor_cs/hybrid-left-out-classes
+    data.ood_test_dataset: ood-test
+    data.ood_val_dataset: ood-val
+    run.experiment_directory: saved_experiments/gpn/coauthor_cs
+    run.experiment_name: hybrid-loc
+    run.num_splits: 5
+coauthor_cs-hybrid-normal:
+  fixed:
+    data.directory: /nfs/homedirs/fuchsgru/MastersThesis/.exported_datasets/coauthor_cs/hybrid-perturbations
+    data.ood_test_dataset: ood-test-normal
+    data.ood_val_dataset: ood-val-normal
+    run.experiment_directory: saved_experiments/gpn/coauthor_cs
+    run.experiment_name: hybrid-normal
+    run.num_splits: 5
+coauthor_cs-transductive-ber:
+  fixed:
+    data.directory: /nfs/homedirs/fuchsgru/MastersThesis/.exported_datasets/coauthor_cs/transductive-perturbations
+    data.ood_test_dataset: ood-test-ber
+    data.ood_val_dataset: ood-val-ber
+    run.experiment_directory: saved_experiments/gpn/coauthor_cs
+    run.experiment_name: transductive-ber
+    run.num_splits: 5
+coauthor_cs-transductive-loc:
+  fixed:
+    data.directory: /nfs/homedirs/fuchsgru/MastersThesis/.exported_datasets/coauthor_cs/transductive-left-out-classes
+    data.ood_test_dataset: ood-test
+    data.ood_val_dataset: ood-val
+    run.experiment_directory: saved_experiments/gpn/coauthor_cs
+    run.experiment_name: transductive-loc
+    run.num_splits: 5
+coauthor_cs-transductive-normal:
+  fixed:
+    data.directory: /nfs/homedirs/fuchsgru/MastersThesis/.exported_datasets/coauthor_cs/transductive-perturbations
+    data.ood_test_dataset: ood-test-normal
+    data.ood_val_dataset: ood-val-normal
+    run.experiment_directory: saved_experiments/gpn/coauthor_cs
+    run.experiment_name: transductive-normal
+    run.num_splits: 5
+fixed:
+  data.ood_dataset_type: budget'
+  data.ood_flag: true
+  data.ood_setting: poisoning
+  data.ood_type: leave_out_classes
+  file_dataset: true
+  model.K: 10
+  model.add_self_loops: true
+  model.alpha_evidence_scale: latent-new
+  model.alpha_teleport: 0.1
+  model.approximate_reg: true
+  model.dim_hidden: 64
+  model.dim_latent: 16
+  model.dropout_prob: 0.5
+  model.entropy_reg: 0.0001
+  model.flow_weight_decay: 0.0
+  model.gaussian_layers: 0
+  model.init_no: 1
+  model.loss_reduction: sum
+  model.maf_layers: 0
+  model.model_name: GPN
+  model.pre_train_mode: flow
+  model.radial_layers: 10
+  model.seed: 42
+  model.use_batched_flow: true
+  run.eval_mode: default
+  run.gpu: 0
+  run.job: train
+  run.num_inits: 5
+  run.save_model: true
+  training.epochs: 100000
+  training.finetune_epochs: 0
+  training.lr: 0.01
+  training.stopping_metric: val_CE
+  training.stopping_minimize: true
+  training.stopping_mode: default
+  training.stopping_patience: 50
+  training.stopping_restore_best: true
+  training.warmup_epochs: 5
+  training.weight_decay: 0.001
+seml:
+  executable: train_and_eval.py
+  name: gpn_baseline
+  output_dir: /nfs/students/fuchsgru/seml_output/gpn
+  project_root_dir: ../..
+slurm:
+  experiments_per_job: 2
+  sbatch_options:
+    cpus-per-task: 4
+    gres: gpu:1
+    mem: 64GB
+    time: 0-72:00

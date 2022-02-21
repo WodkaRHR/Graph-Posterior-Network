@@ -1,0 +1,43 @@
+run:
+  job: train
+  eval_mode: default
+  experiment_directory: ./saved_experiments
+  save_model: false
+  gpu: 0
+  experiment_name: bgcn-bernoulli-hybrid
+
+  num_splits: 2
+  num_inits: 2
+
+file_dataset: true
+
+data:
+  
+  # change this to get a different random split with any (split_no > 0)
+  split_no: 1
+  directory: ../MastersThesis/.exported_datasets/cora_full/hybrid-perturbations
+  ood_flag: true
+  ood_setting: poisoning
+  ood_type: leave_out_classes
+  ood_dataset_type: budget' # only used for perturbation settings
+
+  ood_val_dataset: ood-val-ber
+  ood_test_dataset: ood-test-ber
+model:
+  seed: 42
+  init_no: 1
+  model_name: BayesianGCN
+  dim_hidden: 32
+  bayesian_samples: 10
+  pi: 0.75
+  sigma_1: 1.0
+  sigma_2: 1.0e-06
+training:
+  epochs: 100000
+  stopping_mode: default
+  stopping_patience: 50
+  stopping_restore_best: true
+  stopping_metric: val_CE
+  stopping_minimize: true
+  lr: 0.01
+  weight_decay: 0.0

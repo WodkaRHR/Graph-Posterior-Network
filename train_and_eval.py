@@ -9,23 +9,31 @@ import numpy as np
 
 from collections import OrderedDict
 from sacred import Experiment
-from gpn.utils import RunConfiguration, DataConfiguration
+from gpn.utils import RunConfiguration, DataConfiguration, FileDataConfiguration
 from gpn.utils import ModelConfiguration, TrainingConfiguration
 from gpn.experiments import MultipleRunExperiment
+import seml
 
+import pickle
 
 ex = Experiment()
+seml.setup_logger(ex)
 
+@ex.post_run_hook
+def collect_stats(_run):
+    seml.collect_exp_stats(_run)
 
 @ex.config
 def config():
     #pylint: disable=missing-function-docstring
     overwrite = None
     db_collection = None
+    if db_collection is not None:
+        ex.observers.append(seml.create_mongodb_observer(db_collection, overwrite=overwrite))
 
 
 @ex.automain
-def run_experiment(run: dict, data: dict, model: dict, training: dict) -> dict:
+def run_experiment(run: dict, data: dict, model: dict, training: dict, file_dataset : bool=False) -> dict:
     """main function to run experiment with sacred support
 
     Args:
@@ -33,13 +41,17 @@ def run_experiment(run: dict, data: dict, model: dict, training: dict) -> dict:
         data (dict): configuration parameters of the data
         model (dict): configuration parameters of the model
         training (dict): configuration paramterers of the training
+        file_dataset (bool): if a file-based dataset will be loaded (from the MastersThesis project)
 
     Returns:
         dict: numerical results of the evaluation metrics for different splits
     """
 
     run_cfg = RunConfiguration(**run)
-    data_cfg = DataConfiguration(**data)
+    if file_dataset:
+        data_cfg = FileDataConfiguration(**data)
+    else:
+        data_cfg = DataConfiguration(**data)
     model_cfg = ModelConfiguration(**model)
     train_cfg = TrainingConfiguration(**training)
 
@@ -64,6 +76,8 @@ def run_experiment(run: dict, data: dict, model: dict, training: dict) -> dict:
     
     results = experiment.run()
 
+    with open(os.path.join(run_cfg.experiment_directory, run_cfg.experiment_name, 'results.pkl'), 'wb+') as f:
+        pickle.dump(results, f)
 
     metrics = [m[4:] for m in results.keys() if m.startswith('val_')]
     result_values = {'val': [], 'test': []}

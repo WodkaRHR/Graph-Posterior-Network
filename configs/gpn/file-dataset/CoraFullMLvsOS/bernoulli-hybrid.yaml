@@ -1,0 +1,67 @@
+run:
+  job: train
+  eval_mode: default
+  experiment_directory: ./saved_experiments
+  save_model: true
+
+  num_splits: 5
+  num_inits: 5
+  
+  # if you don't want to run experiments on a GPU, set this flag to false
+  gpu: 0 # or false
+  
+  experiment_name: CoraFullMLvsOS/hybrid-bernoulli
+
+file_dataset: true
+
+data:
+  
+  # change this to get a different random split with any (split_no > 0)
+  split_no: 1
+  directory: ../MastersThesis/.exported_datasets/cora_full/hybrid-perturbations
+  ood_flag: true
+  ood_setting: poisoning
+  ood_type: leave_out_classes
+  ood_dataset_type: budget' # only used for perturbation settings
+
+  ood_val_dataset: ood-val-ber
+  ood_test_dataset: ood-test-ber
+
+model:
+  
+  # change this to a get a different split and random model initialization at the same time
+  seed: 42
+  
+  # change this to a get a different random model initialization (init_no > 0)
+  init_no: 1
+  
+  model_name: GPN
+  dim_hidden: 64
+  dropout_prob: 0.5
+  K: 10
+  add_self_loops: true
+  maf_layers: 0
+  gaussian_layers: 0
+  use_batched_flow: true
+  loss_reduction: sum
+  approximate_reg: true
+  flow_weight_decay: 0.0
+  pre_train_mode: flow
+  alpha_evidence_scale: latent-new
+  alpha_teleport: 0.1
+  entropy_reg: 0.0001
+  dim_latent: 16
+  radial_layers: 10
+
+
+training:
+  epochs: 100000
+  stopping_mode: default
+  stopping_patience: 50
+  stopping_restore_best: true
+  stopping_metric: val_CE
+  stopping_minimize: true
+  finetune_epochs: 0
+  warmup_epochs: 5
+  lr: 0.01
+  weight_decay: 0.001

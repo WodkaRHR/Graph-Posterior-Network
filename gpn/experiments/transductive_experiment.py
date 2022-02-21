@@ -1,7 +1,8 @@
 import os
+
 os.environ['MKL_THREADING_LAYER'] = 'GNU'
 
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union
 from sacred import Experiment
 import pyblaze.nn as xnn
 from pyblaze.nn.engine._history import History
@@ -13,9 +14,9 @@ from gpn.models import EnergyScoring, DropoutEnsemble, Ensemble
 from gpn.utils import set_seed, ModelNotFoundError
 from gpn.nn import TransductiveGraphEngine
 from gpn.nn import get_callbacks_from_config
-from gpn.utils import RunConfiguration, DataConfiguration
+from gpn.utils import RunConfiguration, DataConfiguration, FileDataConfiguration
 from gpn.utils import ModelConfiguration, TrainingConfiguration
-from .dataset import ExperimentDataset
+from .dataset import ExperimentDataset, FileExperimentDataset
 
 
 class TransductiveExperiment:
@@ -24,7 +25,7 @@ class TransductiveExperiment:
     def __init__(
             self,
             run_cfg: RunConfiguration,
-            data_cfg: DataConfiguration,
+            data_cfg: Union[DataConfiguration, FileDataConfiguration],
             model_cfg: ModelConfiguration,
             train_cfg: TrainingConfiguration,
             ex: Optional[Experiment] = None):
@@ -93,7 +94,10 @@ class TransductiveExperiment:
 
         # base dataset
         set_seed(self.model_cfg.seed)
-        self.dataset = ExperimentDataset(data_cfg, to_sparse=data_cfg.to_sparse)
+        if isinstance(data_cfg, DataConfiguration):
+            self.dataset = ExperimentDataset(data_cfg, to_sparse=data_cfg.to_sparse)
+        elif isinstance(data_cfg, FileDataConfiguration):
+            self.dataset = FileExperimentDataset(data_cfg)
         self.model_cfg.set_values(
             dim_features=self.dataset.dim_features,
             num_classes=self.dataset.num_classes

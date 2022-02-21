@@ -69,6 +69,7 @@ def brier_score(y_hat: Tensor, y: Tensor) -> Tensor:
     Returns:
         Tensor: Brier Score
     """
+    # print(f'Brier gnd num classes {max(y.tolist()) + 1}, shape {y.size()}')
     batch_size = y_hat.size(0)
     if batch_size == 0:
         return torch.as_tensor(float('nan'))

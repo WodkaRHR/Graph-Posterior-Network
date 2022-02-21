@@ -25,6 +25,7 @@ class DropoutEnsemble(Model):
 
     def forward_impl(self, data: Data) -> Prediction:
         was_training = self.model.training
+        print(f'Num samples {self.num_samples}')
         self._set_dropout_train(self.num_samples > 1)
 
         softs = torch.stack([self.model(data).soft for s in range(self.num_samples)], dim=1)

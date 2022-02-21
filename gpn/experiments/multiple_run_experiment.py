@@ -1,8 +1,8 @@
-from typing import Dict, Any
+from typing import Dict, Any, Union
 import copy
 import numpy as np
 from sacred import Experiment
-from gpn.utils import RunConfiguration, DataConfiguration
+from gpn.utils import RunConfiguration, DataConfiguration, FileDataConfiguration
 from gpn.utils import ModelConfiguration, TrainingConfiguration
 from .transductive_experiment import TransductiveExperiment
 
@@ -13,7 +13,7 @@ class MultipleRunExperiment:
     def __init__(
             self,
             run_cfg: RunConfiguration,
-            data_cfg: DataConfiguration,
+            data_cfg: Union[DataConfiguration, FileDataConfiguration],
             model_cfg: ModelConfiguration,
             training_cfg: TrainingConfiguration,
             ex: Experiment = None):

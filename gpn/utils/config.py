@@ -1,7 +1,7 @@
 from typing import Union, List, Tuple
 import attr
 from .object import HalfFrozenObject
-
+import os.path as osp
 
 @attr.s(frozen=True)
 class RunConfiguration(HalfFrozenObject):
@@ -49,6 +49,21 @@ class RunConfiguration(HalfFrozenObject):
 
     ood_edge_perturbations: bool = attr.ib(default=True) # flag for running edge pert. exp. in ood_experiment
     ood_isolated_perturbations: bool = attr.ib(default=False) # flag for running isolated exp. in ood_experiment
+
+
+@attr.s(frozen=True)
+class FileDataConfiguration(HalfFrozenObject):
+    """ object specifying possible dataset configurations linking to a dataset file"""
+
+    split_no: int = attr.ib(default=None, validator=lambda i, a, v: v is not None and v > 0)
+    directory: str = attr.ib(default=None, validator=lambda i, a, v: osp.exists(v))
+    ood_flag: bool = attr.ib(default=True)
+    ood_dataset_type: str = attr.ib(None, validator=lambda i, a, v: v in ('budget', 'isolated', None))
+    ood_setting: str = attr.ib(default=None, validator=lambda i, a, v: v in ('evasion', 'poisoning', None))
+    ood_type: str = attr.ib(default=None)
+
+    ood_val_dataset: str = attr.ib(default='ood-val')
+    ood_test_dataset: str = attr.ib(default='ood-test')
 
 
 @attr.s(frozen=True)

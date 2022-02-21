@@ -165,3 +165,35 @@ class OODIsolatedInMemoryDatasetProvider(InMemoryDatasetProvider):
         ind_perturbed = [self.ind_perturbed[index].item()]
         d_p, _ = self.perturbation(self.data_list[0], ind_perturbed=ind_perturbed, **self.perturbation_kwargs)
         return d_p
+
+
+class FileExperimentDatasetProvider(td.Dataset):
+    """ Wrapper class for a single data instance. """ 
+    def __init__(self, data, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.data = data
+    
+    def __getitem__(self, idx):
+        if idx == 0:
+            return self.data
+        else:
+            raise ValueError
+    
+    def __len__(self):
+        return 1
+
+    def loader(self, batch_size=1, shuffle=False):
+        return DataLoader(self, batch_size=batch_size, shuffle=shuffle)
+
+    def clone(self, shallow=False):
+        self_clone = copy.copy(self)
+        if not shallow:
+            self_clone.data = self.data.clone()
+        return self_clone
+
+    def to(self, device, **kwargs):
+        self.data = self.data.to(device, **kwargs)
+        return self
+
+    def to_sparse(self):
+        return self

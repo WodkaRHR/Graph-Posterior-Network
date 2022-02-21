@@ -1,0 +1,42 @@
+run:
+  job: evaluate
+  eval_mode: dropout
+  experiment_directory: ./saved_experiments
+  save_model: true
+  gpu: 0
+  experiment_name: gcn-dropout-bernoulli-hybrid
+
+  num_splits: 5
+  num_inits: 5
+
+file_dataset: true
+
+data:
+  
+  # change this to get a different random split with any (split_no > 0)
+  split_no: 1
+  directory: ../MastersThesis/.exported_datasets/cora_full/hybrid-perturbations
+  ood_flag: true
+  ood_setting: poisoning
+  ood_type: leave_out_classes
+  ood_dataset_type: budget' # only used for perturbation settings
+
+  ood_val_dataset: ood-val-ber
+  ood_test_dataset: ood-test-ber
+model:
+  seed: 42
+  init_no: 1
+  model_name: GCN
+  dim_hidden: 64
+  dropout_prob: 0.8
+  dropout_prob_adj: 0.0
+  num_samples_dropout: 10
+training:
+  epochs: 100000
+  stopping_mode: default
+  stopping_patience: 50
+  stopping_restore_best: true
+  stopping_metric: val_CE
+  stopping_minimize: true
+  lr: 0.01
+  weight_decay: 0.0001
